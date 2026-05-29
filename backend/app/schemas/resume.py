@@ -3,17 +3,24 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
-class ResumeCreate(BaseModel):
-    user_id: int
-    raw_text: str
-    json_data: dict | None = None
-
-
 class ResumeRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     user_id: int
+    filename: str | None
     raw_text: str
     json_data: dict
     created_at: datetime
+
+
+class ResumeUploadResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    resume_id: int
+
+
+class ResumeListResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    items: list[ResumeRead]

@@ -1,8 +1,11 @@
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
 import httpx
 from github import Github
-from sqlalchemy.orm import Session
+from jose import jwt
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.models.user import User
@@ -42,10 +45,21 @@ async def exchange_code_for_token(code: str) -> str:
         return access_token
 
 
+def create_access_token(user_id: int, email: str) -> tuple[str, int]:
+    expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
+    expire_at = datetime.now(timezone.utc) + expires_delta
+    token = jwt.encode(
+        {"sub": str(user_id), "email": email, "exp": expire_at},
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+    return token, int(expires_delta.total_seconds())
+
+
 async def fetch_github_email(access_token: str, fallback_login: str) -> str:
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.get(
-            "https://api.github.com/user/emails",
+            f"{settings.github_api_base_url}/user/emails",
             headers={
                 "Authorization": f"Bearer {access_token}",
                 "Accept": "application/vnd.github+json",
@@ -61,18 +75,19 @@ async def fetch_github_email(access_token: str, fallback_login: str) -> str:
         return f"{fallback_login}@users.noreply.github.com"
 
 
-async def upsert_github_user(session: Session, access_token: str) -> User:
+async def upsert_github_user(session: AsyncSession, access_token: str) -> User:
     github = Github(access_token)
     profile = github.get_user()
-
     email = await fetch_github_email(access_token, profile.login)
-    user = session.query(User).filter(User.email == email).one_or_none()
+
+    result = await session.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
     if user is None:
         user = User(email=email, github_token=access_token)
         session.add(user)
     else:
         user.github_token = access_token
 
-    session.commit()
-    session.refresh(user)
+    await session.commit()
+    await session.refresh(user)
     return user

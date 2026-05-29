@@ -7,14 +7,16 @@ from app.core.config import get_settings
 from app.db.base import Base
 from app.db.session import engine
 from app.models import Application, Job, Resume, User
-from app.routes import applications, auth, health, jobs, resumes
+from app.routes import health
+from app.routes import application, auth, job, resume
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
 
 
@@ -30,6 +32,6 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(auth.router)
-app.include_router(resumes.router)
-app.include_router(jobs.router)
-app.include_router(applications.router)
+app.include_router(resume.router)
+app.include_router(job.router)
+app.include_router(application.router)

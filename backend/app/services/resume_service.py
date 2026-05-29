@@ -1,13 +1,27 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ai.resume_analyzer import analyze_resume
 from app.models.resume import Resume
+from app.models.user import User
 
 
-def create_resume(session: Session, user_id: int, raw_text: str, json_data: dict | None = None) -> Resume:
-    payload = json_data or analyze_resume(raw_text)
-    resume = Resume(user_id=user_id, raw_text=raw_text, json_data=payload)
+async def create_resume(session: AsyncSession, user_id: int, filename: str, raw_text: str, json_data: dict | None = None) -> Resume:
+    result = await session.execute(select(User.id).where(User.id == user_id))
+    if result.scalar_one_or_none() is None:
+        raise ValueError("User not found")
+
+    resume = Resume(user_id=user_id, filename=filename, raw_text=raw_text, json_data=json_data or {})
     session.add(resume)
-    session.commit()
-    session.refresh(resume)
+    await session.commit()
+    await session.refresh(resume)
     return resume
+
+
+async def list_user_resumes(session: AsyncSession, user_id: int) -> list[Resume]:
+    result = await session.execute(select(Resume).where(Resume.user_id == user_id).order_by(Resume.created_at.desc()))
+    return list(result.scalars().all())
+
+
+async def get_user_resume(session: AsyncSession, user_id: int, resume_id: int) -> Resume | None:
+    result = await session.execute(select(Resume).where(Resume.user_id == user_id, Resume.id == resume_id))
+    return result.scalar_one_or_none()
