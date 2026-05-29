@@ -8,7 +8,7 @@ from app.db.base import Base
 from app.db.session import engine
 from app.models import Application, Job, Resume, User
 from app.routes import health
-from app.routes import application, auth, job, resume
+from app.routes import application, auth, download, job, resume
 
 settings = get_settings()
 
@@ -35,3 +35,4 @@ app.include_router(auth.router)
 app.include_router(resume.router)
 app.include_router(job.router)
 app.include_router(application.router)
+app.include_router(download.router)

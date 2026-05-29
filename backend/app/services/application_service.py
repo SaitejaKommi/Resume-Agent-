@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.application import Application
 from app.models.job import Job
@@ -45,10 +46,19 @@ async def create_application(
 
 
 async def list_user_applications(session: AsyncSession, user_id: int) -> list[Application]:
-    result = await session.execute(select(Application).where(Application.user_id == user_id).order_by(Application.created_at.desc()))
+    result = await session.execute(
+        select(Application)
+        .options(selectinload(Application.resume), selectinload(Application.job))
+        .where(Application.user_id == user_id)
+        .order_by(Application.created_at.desc())
+    )
     return list(result.scalars().all())
 
 
 async def get_user_application(session: AsyncSession, user_id: int, application_id: int) -> Application | None:
-    result = await session.execute(select(Application).where(Application.user_id == user_id, Application.id == application_id))
+    result = await session.execute(
+        select(Application)
+        .options(selectinload(Application.resume), selectinload(Application.job))
+        .where(Application.user_id == user_id, Application.id == application_id)
+    )
     return result.scalar_one_or_none()

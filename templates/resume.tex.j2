@@ -1,0 +1,106 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=0.6in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{ragged2e}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+    linkcolor=black,
+    pdfauthor={{ personal.name }},
+    pdftitle={{ personal.name }}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\pagenumbering{gobble}
+\raggedright
+
+\titleformat{\section}{\large\bfseries\scshape}{}{0em}{}[\vspace{-0.35em}\titlerule]
+\titlespacing*{\section}{0pt}{0.65em}{0.35em}
+
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{0.15em}
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{0.74\textwidth}r}
+    \textbf{#1} & \textbf{#2} \\
+    \textit{\small #3} & \textit{\small #4}
+  \end{tabular*}
+  \vspace{-0.25em}
+}
+\newcommand{\resumeProject}[3]{
+  \vspace{0.15em}
+  \textbf{#1} \hfill \textit{\small #2}\\
+  \textit{\small #3}
+  \vspace{-0.15em}
+}
+\newcommand{\sectionListStart}{\begin{itemize}[leftmargin=*,itemsep=0.2em,topsep=0.15em,parsep=0pt]} 
+\newcommand{\sectionListEnd}{\end{itemize}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE\textbf{{ personal.name }}}\\[0.35em]
+    {\small
+    {% if personal.email %}\href{mailto:{{ personal.email }}}{{ personal.email }}{% endif %}
+    {% if personal.phone %} \textbar{} {{ personal.phone }}{% endif %}
+    {% if personal.github %} \textbar{} \href{https://{{ personal.github }}}{{ personal.github }}{% endif %}
+    {% if personal.linkedin %} \textbar{} \href{https://{{ personal.linkedin }}}{{ personal.linkedin }}{% endif %}
+    {% if personal.portfolio %} \textbar{} \href{https://{{ personal.portfolio }}}{{ personal.portfolio }}{% endif %}
+    }
+\end{center}
+
+{% if summary %}
+\section{Summary}
+{{ summary }}
+{% endif %}
+
+\section{Skills}
+\begin{itemize}[leftmargin=*,itemsep=0.15em,topsep=0.15em,parsep=0pt]
+{% for category, items in skills.items() %}
+  \item \textbf{ {{ category }} }: {{ items | join(", ") }}
+{% endfor %}
+\end{itemize}
+
+\section{Projects}
+{% for project in projects %}
+\resumeProject{ {{ project.name }} }{ {{ project.year or "" }} }{ {{ (project.tech_tags or project.tech_stack or []) | join(", ") }} }
+\begin{itemize}[leftmargin=1.2em,itemsep=0.15em,topsep=0.15em,parsep=0pt]
+{% for bullet in project.bullets[:4] %}
+  \item {{ bullet }}
+{% endfor %}
+{% if project.link %}
+  \item \href{https://{{ project.link }}}{{ project.link }}
+{% endif %}
+\end{itemize}
+{% endfor %}
+
+{% if experience %}
+\section{Experience}
+{% for item in experience %}
+\resumeSubheading{ {{ item.company or item.name or "" }} }{ {{ item.dates or item.duration or "" }} }{ {{ item.title or item.role or "" }} }{ {{ item.location or "" }} }
+\begin{itemize}[leftmargin=1.2em,itemsep=0.15em,topsep=0.15em,parsep=0pt]
+{% for bullet in item.bullets[:4] %}
+  \item {{ bullet }}
+{% endfor %}
+\end{itemize}
+{% endfor %}
+{% endif %}
+
+{% if education %}
+\section{Education}
+{% for item in education %}
+\resumeSubheading{ {{ item.institution or item.school or item.name or "" }} }{ {{ item.dates or item.year or "" }} }{ {{ item.degree or item.program or item.title or "" }} }{ {{ item.location or "" }} }
+{% endfor %}
+{% endif %}
+
+\end{document}
