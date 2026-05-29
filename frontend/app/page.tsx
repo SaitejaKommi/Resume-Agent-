@@ -1,3 +1,48 @@
+"use client"
+import Link from "next/link"
+import { useTheme } from "next-themes"
+import { Button } from "../components/ui/button"
+
+export default function Home() {
+  const { theme, setTheme } = useTheme()
+  return (
+    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <div className="container mx-auto px-4 py-16">
+        <header className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">ResumeAgent</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              Toggle
+            </Button>
+            <Link href="/dashboard"><Button>Dashboard</Button></Link>
+          </div>
+        </header>
+
+        <section className="mt-12 text-center">
+          <h2 className="text-4xl font-extrabold">AI Resume Copilot for Developers</h2>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Generate role-specific, ATS-optimized resumes using your GitHub projects automatically.</p>
+          <div className="mt-6">
+            <Link href="/dashboard"><Button size="lg">Get Started — Dashboard</Button></Link>
+          </div>
+        </section>
+
+        <section className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[
+            { title: 'GitHub-aware', text: 'Automatically surface relevant projects.' },
+            { title: 'ATS Optimized', text: 'Keyword-aware resume improvements.' },
+            { title: 'LaTeX Quality', text: 'High-fidelity single-page PDF output.' },
+            { title: 'Role-Specific', text: 'Tailor resumes per role automatically.' },
+          ].map((f) => (
+            <div key={f.title} className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+              <h3 className="font-semibold">{f.title}</h3>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{f.text}</p>
+            </div>
+          ))}
+        </section>
+      </div>
+    </main>
+  )
+}
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResumeWorkbench } from "@/components/resume-workbench";
