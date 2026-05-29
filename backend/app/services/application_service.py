@@ -14,6 +14,7 @@ async def create_application(
     resume_id: int,
     job_id: int,
     github_repos: list[str],
+    github_token: str,
     pdf_path: str | None = None,
 ) -> Application:
     user_result = await session.execute(select(User.id).where(User.id == user_id))
@@ -27,7 +28,7 @@ async def create_application(
     if resume is None or job is None:
         raise ValueError("Resume or job not found")
 
-    pipeline_result = run_mock_resume_job_pipeline(resume.raw_text, job.jd_text, github_repos)
+    pipeline_result = run_mock_resume_job_pipeline(resume.raw_text, job.jd_text, github_repos, github_token)
     application = Application(
         user_id=user_id,
         resume_id=resume_id,

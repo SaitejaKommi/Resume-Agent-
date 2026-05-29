@@ -25,6 +25,7 @@ async def create_user_application(
             resume_id=payload.resume_id,
             job_id=payload.job_id,
             github_repos=payload.github_repos,
+            github_token=current_user.github_token or "",
             pdf_path=payload.pdf_path,
         )
     except ValueError as exc:
