@@ -1,16 +1,20 @@
 "use client"
+
 import React from "react"
 
-type Props = { children: React.ReactNode, variant?: 'default' | 'success' | 'warning' | 'destructive' }
+import { cn } from "@/lib/utils"
 
-export function Badge({ children, variant='default' }: Props) {
+type Props = { children: React.ReactNode; variant?: "default" | "success" | "warning" | "destructive" }
+
+export function Badge({ children, variant = "default" }: Props) {
   const classes = {
-    default: 'bg-gray-100 text-gray-800 px-2 py-1 rounded',
-    success: 'bg-green-100 text-green-800 px-2 py-1 rounded',
-    warning: 'bg-amber-100 text-amber-800 px-2 py-1 rounded',
-    destructive: 'bg-red-100 text-red-800 px-2 py-1 rounded',
+    default: "border border-white/12 bg-white/10 text-slate-100",
+    success: "border border-emerald-400/20 bg-emerald-400/12 text-emerald-200",
+    warning: "border border-amber-400/20 bg-amber-400/12 text-amber-200",
+    destructive: "border border-rose-400/20 bg-rose-400/12 text-rose-200",
   }
-  return <span className={classes[variant]}>{children}</span>
+
+  return <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-medium", classes[variant])}>{children}</span>
 }
 
 export default Badge

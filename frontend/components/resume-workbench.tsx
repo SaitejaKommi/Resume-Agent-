@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,6 @@ export function ResumeWorkbench() {
   const [jobDescription, setJobDescription] = useState(
     "Senior Full-Stack Engineer with React, FastAPI, PostgreSQL, and AI workflow experience.",
   );
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("No file selected");
 
   useEffect(() => {
@@ -38,19 +36,9 @@ export function ResumeWorkbench() {
       .catch(() => setMetrics((current) => ({ ...current, health: "offline" })));
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
-      }
-    };
-  }, [fileUrl]);
-
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setFileUrl(url);
     setFileName(file.name);
     setMetrics((current) => ({ ...current, uploads: current.uploads + 1 }));
   };
@@ -113,19 +101,13 @@ export function ResumeWorkbench() {
           <CardDescription className="text-slate-300">The viewer renders uploaded PDFs without leaving the workspace.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="min-h-[540px] overflow-hidden rounded-3xl bg-white p-4 text-slate-950">
-            {fileUrl ? (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@4.8.69/build/pdf.worker.min.mjs">
-                <Viewer fileUrl={fileUrl} />
-              </Worker>
-            ) : (
-              <div className="flex min-h-[500px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-center">
-                <div>
-                  <p className="text-lg font-semibold">No PDF loaded</p>
-                  <p className="mt-2 text-sm text-slate-500">Upload a file to preview it here.</p>
-                </div>
+          <div className="min-h-[540px] rounded-3xl border border-dashed border-slate-200 bg-white p-4 text-slate-950">
+            <div className="flex min-h-[500px] items-center justify-center rounded-2xl bg-slate-50 text-center">
+              <div>
+                <p className="text-lg font-semibold">Preview removed from the lightweight build</p>
+                <p className="mt-2 text-sm text-slate-500">The workbench now focuses on upload, analysis, and generation without the heavy PDF viewer dependency.</p>
               </div>
-            )}
+            </div>
           </div>
         </CardContent>
       </Card>
