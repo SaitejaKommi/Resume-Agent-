@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.models.user import User
+from app.services.profile_service import upsert_github_metadata
 
 
 settings = get_settings()
@@ -90,4 +91,18 @@ async def upsert_github_user(session: AsyncSession, access_token: str) -> User:
 
     await session.commit()
     await session.refresh(user)
+
+    github_json = {
+        "login": profile.login,
+        "name": profile.name,
+        "bio": profile.bio,
+        "company": profile.company,
+        "location": profile.location,
+        "blog": profile.blog,
+        "html_url": profile.html_url,
+        "public_repos": profile.public_repos,
+        "followers": profile.followers,
+        "following": profile.following,
+    }
+    await upsert_github_metadata(session, user.id, github_json)
     return user

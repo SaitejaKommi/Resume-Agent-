@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.resume import Resume
 from app.models.user import User
+from app.services.profile_service import upsert_master_profile_from_resume
 
 
 async def create_resume(session: AsyncSession, user_id: int, filename: str, raw_text: str, json_data: dict | None = None) -> Resume:
@@ -14,6 +15,7 @@ async def create_resume(session: AsyncSession, user_id: int, filename: str, raw_
     session.add(resume)
     await session.commit()
     await session.refresh(resume)
+    await upsert_master_profile_from_resume(session, user_id, resume)
     return resume
 
 
