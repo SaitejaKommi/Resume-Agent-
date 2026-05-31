@@ -19,6 +19,32 @@ export async function createApplication(payload: { resume_id: number; job_id: nu
   return res.data
 }
 
+export async function getProfile() {
+  const res = await client.get("/profile/me")
+  return res.data
+}
+
+export async function updateProfile(payload: {
+  headline?: string | null
+  summary?: string | null
+  education_json?: any[] | null
+  experience_json?: any[] | null
+  skills_json?: any[] | null
+  certifications_json?: any[] | null
+  achievements_json?: any[] | null
+  projects_json?: any[] | null
+  github_json?: Record<string, any> | null
+  portfolio_links_json?: any[] | null
+}) {
+  const res = await client.patch("/profile/me", payload)
+  return res.data
+}
+
+export async function getResumeVersions() {
+  const res = await client.get("/resume-versions/list")
+  return res.data?.items || []
+}
+
 export async function getApplication(id: number) {
   const res = await client.get(`/application/${id}`)
   return res.data
