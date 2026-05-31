@@ -1,130 +1,125 @@
 "use client"
+
 import Link from "next/link"
 import { useTheme } from "next-themes"
+
+import { Badge } from "../components/ui/badge"
 import { Button } from "../components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
+
+const metrics = [
+  { label: "Resumes tailored", value: "2.8k" },
+  { label: "ATS uplift", value: "+34%" },
+  { label: "Median time saved", value: "18 min" },
+]
+
+const features = [
+  {
+    title: "GitHub-aware matching",
+    text: "Pulls the most relevant repos into each application so the resume reads like real work, not generic keywords.",
+  },
+  {
+    title: "ATS-first scoring",
+    text: "Highlights missing keywords, weak bullets, and formatting gaps before you export a PDF.",
+  },
+  {
+    title: "LaTeX export",
+    text: "Compiles a clean, single-page resume that is sharp enough for recruiters and parsers alike.",
+  },
+  {
+    title: "Role-specific workflow",
+    text: "Create a tailored version for each job without rebuilding your profile from scratch every time.",
+  },
+]
 
 export default function Home() {
   const { theme, setTheme } = useTheme()
+
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <div className="container mx-auto px-4 py-16">
-        <header className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">ResumeAgent</h1>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-              Toggle
-            </Button>
-            <Link href="/dashboard"><Button>Dashboard</Button></Link>
+    <main className="relative min-h-screen overflow-hidden">
+      <div className="hero-grid absolute inset-0 opacity-30" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),transparent_32%),radial-gradient(circle_at_right,rgba(59,130,246,0.1),transparent_28%)]" />
+
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-10">
+        <header className="flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-white/10 bg-slate-950/50 px-5 py-4 backdrop-blur-xl">
+          <div>
+            <p className="text-xs uppercase tracking-[0.35em] text-emerald-300">ResumeAgent</p>
+            <h1 className="mt-1 font-display text-2xl text-white">AI resume optimization studio</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>Toggle theme</Button>
+            <Button href="/dashboard" variant="outline" size="sm">Dashboard</Button>
+            <Button href="/apply" size="sm">Start a role</Button>
           </div>
         </header>
 
-        <section className="mt-12 text-center">
-          <h2 className="text-4xl font-extrabold">AI Resume Copilot for Developers</h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Generate role-specific, ATS-optimized resumes using your GitHub projects automatically.</p>
-          <div className="mt-6">
-            <Link href="/dashboard"><Button size="lg">Get Started — Dashboard</Button></Link>
-          </div>
-        </section>
-
-        <section className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[
-            { title: 'GitHub-aware', text: 'Automatically surface relevant projects.' },
-            { title: 'ATS Optimized', text: 'Keyword-aware resume improvements.' },
-            { title: 'LaTeX Quality', text: 'High-fidelity single-page PDF output.' },
-            { title: 'Role-Specific', text: 'Tailor resumes per role automatically.' },
-          ].map((f) => (
-            <div key={f.title} className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
-              <h3 className="font-semibold">{f.title}</h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{f.text}</p>
-            </div>
-          ))}
-        </section>
-      </div>
-    </main>
-  )
-}
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResumeWorkbench } from "@/components/resume-workbench";
-
-export default function Page() {
-  return (
-    <main className="min-h-screen">
-      <section className="hero-grid border-b border-slate-200/70">
-        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-          <div className="flex items-center justify-between rounded-full border border-slate-200 bg-white/80 px-5 py-3 shadow-sm backdrop-blur">
-            <div>
-              <p className="font-display text-lg font-semibold tracking-tight text-slate-950">ResumeAgent</p>
-            </div>
-            <Button href="http://localhost:8000/auth/github/login" size="sm" className="hidden md:inline-flex">
-              Sign in with GitHub
-            </Button>
-          </div>
-        </div>
-
-        <div className="mx-auto grid max-w-7xl gap-14 px-6 pb-16 pt-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-10 lg:pb-24 lg:pt-14">
+        <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:py-16">
           <div className="space-y-8">
-            <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
-              AI resume optimization for modern hiring loops
-            </div>
-            <div className="space-y-5">
-              <h1 className="max-w-3xl font-display text-5xl font-semibold tracking-tight text-slate-950 md:text-7xl">
-                Turn every resume into a sharper, more relevant application.
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                ResumeAgent combines PDF ingestion, job-description extraction, ATS scoring, and GitHub OAuth so candidates can tailor faster and apply with confidence.
+            <Badge variant="success">Live AI resume generation</Badge>
+            <div className="max-w-3xl space-y-5">
+              <h2 className="font-display text-5xl leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+                Turn your experience into a sharper, role-specific resume.
+              </h2>
+              <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+                ResumeAgent analyzes a job description, ranks your GitHub projects, rewrites bullets, and exports a polished PDF without the usual template churn.
               </p>
             </div>
+
             <div className="flex flex-wrap gap-3">
-              <Button href="http://localhost:8000/auth/github/login" size="lg">
-                Connect GitHub
-              </Button>
-              <Button href="http://localhost:8000/health" variant="outline" size="lg">
-                View backend health
-              </Button>
+              <Button href="/apply" size="lg">Build a tailored resume</Button>
+              <Button href="/dashboard" variant="outline" size="lg">View dashboard</Button>
             </div>
+
             <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                ["Resume parsing", "Structured JSON output for downstream workflows."],
-                ["Skill matching", "Compare resumes against target roles instantly."],
-                ["Secure storage", "Persist GitHub tokens and candidate data in PostgreSQL."],
-              ].map(([title, description]) => (
-                <Card key={title} className="border-slate-200/80 bg-white/85">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
-                  </CardHeader>
+              {metrics.map((metric) => (
+                <Card key={metric.label} className="bg-white/6">
+                  <CardContent className="px-5 py-5">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{metric.label}</p>
+                    <p className="mt-3 font-display text-3xl text-white">{metric.value}</p>
+                  </CardContent>
                 </Card>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200/80 bg-white/70 p-4 shadow-glow backdrop-blur">
-            <ResumeWorkbench />
-          </div>
-        </div>
-      </section>
-      <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            ["FastAPI backend", "Clear route/service separation and SQLAlchemy models."],
-            ["Tailwind + shadcn", "Custom UI primitives with an elevated visual system."],
-            ["Docker-ready", "Frontend, backend, and PostgreSQL can run from one compose file."],
-          ].map(([title, description]) => (
-            <Card key={title}>
+          <Card className="bg-slate-950/80 text-white">
+            <CardHeader>
+              <Badge variant="default">Pipeline preview</Badge>
+              <CardTitle className="mt-4 text-2xl">From JD to PDF in one flow</CardTitle>
+              <CardDescription>
+                A focused dashboard for uploads, matching, scoring, and export.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                ["1. Ingest", "Resume, JD, and repo links."],
+                ["2. Rank", "Projects are scored by relevance."],
+                ["3. Optimize", "Bullets are rewritten for impact."],
+                ["4. Export", "Single-page PDF is compiled."],
+              ].map(([step, detail]) => (
+                <div key={step} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/15 text-sm font-semibold text-emerald-300">{step.split(".")[0]}</div>
+                  <div>
+                    <p className="font-medium text-white">{step}</p>
+                    <p className="text-sm text-slate-300">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="grid gap-5 pb-8 lg:grid-cols-2">
+          {features.map((feature) => (
+            <Card key={feature.title} className="bg-white/7">
               <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription>{description}</CardDescription>
+                <CardTitle>{feature.title}</CardTitle>
+                <CardDescription>{feature.text}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-6 text-slate-600">
-                  Built to be extended with LLM extraction, scoring, and application automation.
-                </p>
-              </CardContent>
             </Card>
           ))}
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
-  );
+  )
 }
