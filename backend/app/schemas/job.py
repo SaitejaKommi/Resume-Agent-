@@ -3,6 +3,10 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
+class JobCreate(BaseModel):
+    jd_text: str
+
+
 class JobRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

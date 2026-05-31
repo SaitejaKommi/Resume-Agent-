@@ -23,3 +23,4 @@ class Resume(Base):
 
     user = relationship("User", back_populates="resumes")
     applications = relationship("Application", back_populates="resume")
+    master_profiles = relationship("MasterProfile", back_populates="source_resume")
