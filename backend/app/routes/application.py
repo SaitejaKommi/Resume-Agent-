@@ -27,6 +27,10 @@ async def create_user_application(
             github_repos=payload.github_repos,
             github_token=current_user.github_token or "",
             pdf_path=payload.pdf_path,
+            company=payload.company,
+            role_title=payload.role_title,
+            status=payload.status,
+            date_applied=payload.date_applied,
         )
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

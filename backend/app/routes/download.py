@@ -25,7 +25,8 @@ def _application_pdf_path(application_id: int) -> Path:
 
 
 def _build_resume_payload(application: Application) -> dict:
-    resume_json = application.resume.json_data or {}
+    version_json = application.resume_version.resume_content_json if application.resume_version else {}
+    resume_json = application.resume.json_data or version_json.get("resume") or {}
     personal = resume_json.get("personal") or resume_json.get("personal_info") or {}
     projects = resume_json.get("projects") or []
     experience = resume_json.get("experience") or []
@@ -44,6 +45,16 @@ def _build_resume_payload(application: Application) -> dict:
             "linkedin": resume_json.get("linkedin") or "",
             "portfolio": resume_json.get("portfolio") or "",
         }
+
+    if not projects and application.resume_version:
+        version_projects = application.resume_version.resume_content_json.get("pipeline_result", {}).get("projects") or []
+        projects = [
+            {
+                **project,
+                "tech_tags": project.get("tech_tags") or project.get("tech_stack") or [],
+            }
+            for project in version_projects
+        ]
 
     if not projects and application.pipeline_result:
         pipeline_projects = application.pipeline_result.get("projects") or []
