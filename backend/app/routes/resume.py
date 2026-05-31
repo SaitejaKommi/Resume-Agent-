@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.resume import ResumeListResponse, ResumeRead, ResumeUploadResponse
@@ -32,7 +32,7 @@ def _extract_text(upload: UploadFile, file_bytes: bytes) -> str:
 async def upload_resume(
     file: UploadFile = File(...),
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User | None = Depends(get_current_user_optional),
 ) -> ResumeUploadResponse:
     if file.content_type not in {
         "application/pdf",
@@ -48,8 +48,17 @@ async def upload_resume(
         raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="File exceeds 5MB limit")
 
     raw_text = _extract_text(file, file_bytes)
-    resume = await create_resume(session, current_user.id, file.filename or "resume", raw_text)
-    return ResumeUploadResponse(resume_id=resume.id)
+    
+    # If user is authenticated, store in database
+    if current_user:
+        resume = await create_resume(session, current_user.id, file.filename or "resume", raw_text)
+        return ResumeUploadResponse(resume_id=resume.id)
+    
+    # For guest users, return a temporary ID based on hash
+    # In production, consider using temporary storage or sessions
+    import hashlib
+    temp_id = int(hashlib.md5(file_bytes[:100]).hexdigest(), 16) % 100000000
+    return ResumeUploadResponse(resume_id=temp_id)
 
 
 @router.get("/{id}", response_model=ResumeRead)
